@@ -659,10 +659,15 @@ function option1Pal(){P("How dare you speak about him like that!",()=>gossipChoi
    ["I dare you to do it.",()=>V("I dare you to do it.",fist)]
  ])))],
  ["Do you not recognize who I am?",()=>V("Do you not recognize who I am?",()=>T("You must be an entitled brat, if I'm to judge.",()=>gossipChoices([
-   ["I'm just a girl... who can say whatever the fuck she wants.",()=>V("I'm just a girl... who can say whatever the fuck she wants.",()=>T("Say what you want somewhere else.",()=>gossipSay([["Princess Valeriia","I'll say it here. The Prince is a clown. Bite me."],["Narration","Valeriia winks and leaves the conversation."]],gossipEnd)))],
+   ["I'm just a girl... who can say whatever the fuck she wants.",()=>V("I'm just a girl... who can say whatever the fuck she wants.",()=>T("Say what you want somewhere else.",gossipLastWord))],
    ["I'm the Princess. Shall I repeat myself?",()=>V("I'm the Princess. Shall I repeat myself?",()=>T("Oh! I'm so sorry, Princess. I'm sorry. We'll stop talking now!",()=>gossipSay([["Princess Valeriia","Good."],["Narration","Valeriia winks and leaves the conversation."]],gossipEnd)))]
  ])))]
 ]));}
+function gossipLastWord(){
+ const leaveConversation=()=>gossipSay([["Narration","Valeriia winks and leaves the conversation."]],gossipEnd);
+ const replies=["I'll say it here. The Prince is a clown. Bite me.","The Prince can go fuck himself. You heard me."];
+ gossipChoices(replies.map(reply=>[reply,()=>V(reply,leaveConversation)]));
+}
 function fist(){gossipSay([["Narration","Tobias raises a fist."]],()=>gossipChoices([
  ["Dodge.",()=>gossipSay([["Narration","Valeriia dodges, winks and leaves the conversation."]],gossipEnd)],
  ["Hit him first.",()=>gossipSay([["Narration","Valeriia hits him first, smirks and leaves the conversation."]],gossipEnd)]
@@ -2472,7 +2477,7 @@ function drawSnowDance(time){
  }
 }
 function startSnowMemory(){if(snowMemorySeen||snowMemoryActive)return;snowMemoryActive=true;sceneTransitioning=true;keys.clear();timeFade.querySelector('strong').textContent='A MEMORY';timeFade.querySelector('small').textContent='DANCING IN THE SNOW';timeFade.classList.add('visible');setTimeout(()=>{setScene('snowmemory');setTimeout(()=>{timeFade.classList.remove('visible');setTimeout(()=>{setTimeout(endSnowMemory,6800);},850)},550)},850)}
-function endSnowMemory(){if(scene!=='snowmemory')return;sceneTransitioning=true;timeFade.querySelector('strong').textContent='PRESENT DAY';timeFade.querySelector('small').textContent='THE SNOWY MOUNTAIN';timeFade.classList.add('visible');setTimeout(()=>{snowMemorySeen=true;snowMemoryActive=false;setScene('snowpeak');princess.x=304;princess.y=191;setTimeout(()=>{timeFade.classList.remove('visible');setTimeout(()=>{sceneTransitioning=false;notify('The memory fades. Continue left along the mountain path.');},850)},500)},850)}
+function endSnowMemory(){if(scene!=='snowmemory')return;sceneTransitioning=true;timeFade.querySelector('strong').textContent='PRESENT DAY';timeFade.querySelector('small').textContent='THE SNOWY MOUNTAIN';timeFade.classList.add('visible');setTimeout(()=>{snowMemorySeen=true;snowMemoryActive=false;setScene('snowpeak');princess.x=304;princess.y=191;setTimeout(()=>{timeFade.classList.remove('visible');setTimeout(()=>{sceneTransitioning=false;notify('The memory fades. Continue right along the mountain path.');},850)},500)},850)}
 
 
 // SCENE 17 — TRAVELLER ACE: ONE OPTIONAL CARD DRAW, NO REPEAT
@@ -4787,9 +4792,16 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
   background-size: contain; background-position: center; background-repeat: no-repeat; transition: none;
 }
 #wedding-finale .wedding-art.wedding-black-screen { position: absolute; inset: 0; background: #000; }
-#wedding-finale[data-epilogue="true"]:has(.wedding-black-screen) .wedding-panel {
+#wedding-finale:has(.wedding-black-screen) { background: #000; }
+#wedding-finale:has(.wedding-black-screen) .wedding-panel {
   align-self: center; margin: auto 0; text-align: center; background: #000;
   border-color: transparent; box-shadow: none;
+}
+#wedding-finale:has(.wedding-black-screen) .wedding-panel.narration {
+  box-sizing: border-box; width: min(100%, 780px); max-height: 100%;
+}
+#wedding-finale:has(.wedding-black-screen) .narration .wedding-text {
+  font-size: clamp(1.375rem, 3.5vw, 2rem); line-height: 1.45;
 }
 @media (prefers-reduced-motion: no-preference) {
   #wedding-finale[data-epilogue="true"][data-node="e_grief_visit"] .wedding-art {
@@ -5963,7 +5975,10 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "e_threat": {"kind": "slide", "image": "e20", "next": "e_threat_2"},
 "e_threat_2": {"kind": "line", "speaker": "Princess Naomi", "text": "Do you think Haroldo will come after us?", "next": "e_threat_3", "image": "e21"},
 "e_threat_3": {"kind": "line", "speaker": "Princess Valeriia", "text": "I don't know.", "next": "e_threat_4"},
-"e_threat_4": {"kind": "line", "speaker": "Princess Naomi", "text": "Where do you want to go?", "next": "e_destination"},
+"e_threat_4": {"kind": "line", "speaker": "Princess Naomi", "text": "Where do you want to go?", "next": "e_threat_where"},
+"e_threat_where": {"kind": "condition", "test": "relationship", "yes": "e_threat_where_exposed", "no": "e_threat_where_secret"},
+"e_threat_where_secret": {"kind": "line", "speaker": "Princess Naomi", "text": "Flee to Northal, where we can live peacefully? Or should we go to Eastlandia and stay princesses, where we can either tell your parents about our relationship, risking their disapproval, or stay a secret, in both cases risking political unrest, now that tensions with Southeran will probably rise if we stay princesses of our kingdoms.", "next": "e_destination"},
+"e_threat_where_exposed": {"kind": "line", "speaker": "Princess Naomi", "text": "Flee to Northal, where we can live peacefully? Or should we go to Eastlandia and stay princesses, where we risk your parents' disapproval of our relationship because they'll hear about it, and risking political unrest, now that tensions with Southeran will probably rise if we stay princesses of our kingdoms.", "next": "e_destination"},
 "e_wounded": {"kind": "slide", "image": "e23", "next": "e_wounded_2"},
 "e_wounded_2": {"kind": "line", "speaker": "Princess Naomi", "text": "Are you okay, Princess?", "next": "e_wounded_3", "image": "e24"},
 "e_wounded_3": {"kind": "line", "speaker": "Princess Valeriia", "text": "Yeah, I'm fine.", "next": "e_wounded_4"},
