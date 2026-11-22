@@ -475,7 +475,7 @@ function setScene(next, fromInn=false) {
   if (next === "hall") {
     princess.x = 305; princess.y = 75;
     titleLabel.textContent = "EASTLANDIA CASTLE · GRAND CORRIDOR";
-    message.textContent = "Talk to Maid Vera and find a way past the guard.";
+    message.textContent = "Talk to Maid Vero and find a way past the guard.";
   } else if (next === "bedroom") {
     princess.x = 305; princess.y = 319;
     titleLabel.textContent = "EASTLANDIA CASTLE · ROYAL CHAMBERS";
@@ -547,7 +547,7 @@ function setScene(next, fromInn=false) {
   window.weddingFinale?.changeScene(next);
 }
 const hallObjects = [
-  {id:"maid",x:92,y:186,w:28,h:36,label:"Maid Vera",lines:["Maid Vera: Dear? What happened?","Princess Valeriia: Did you know about the wedding between Princess Naomi from Westanol and the Southeran Prince?","Maid Vera (whispers): Your.... Princess Naomi? She's getting married?","Princess Valeriia: Yes! To a fucking Prince!","Maid Vera: It cannot be!","Princess Valeriia: It fucking be! I have to get there.","Maid Vera: Go! But wait! The guard won't let you pass without a royal seal. Here. Take mine.","Princess Valeriia: Thank you, Vera. I hope I won't be too late."]},
+  {id:"maid",x:92,y:186,w:28,h:36,label:"Maid Vero",lines:["Maid Vero: Dear? What happened?","Princess Valeriia: Did you know about the wedding between Princess Naomi from Westanol and the Southeran Prince?","Maid Vero (whispers): Your.... Princess Naomi? She's getting married?","Princess Valeriia: Yes! To a fucking Prince!","Maid Vero: It cannot be!","Princess Valeriia: It fucking be! I have to get there.","Maid Vero: Go! But wait! The guard won't let you pass without a royal seal. Here. Take mine.","Princess Valeriia: Thank you, Vera. I hope I won't be too late."]},
   {id:"tapestry",x:285,y:305,w:78,h:30,label:"Westanol tapestry",lines:["The flowers remind me of Naomi."]},
   {id:"portrait",x:70,y:285,w:65,h:34,label:"Royal portrait",lines:["A portrait of the royal family.","I look fabulous."]},
   {id:"guard",x:291,y:247,w:40,h:42,label:"Sir Balt",lines:["Sir Balt: HALT! By order of the Crown, nobody leaves without a royal seal!","Sir Balt: I'm terribly sorry, Your Highness. Rules are rules."]},
@@ -560,9 +560,9 @@ function hallInteract(obj) {
     if (!hasSeal) {
       hasSeal = true;
       showLines(obj.lines);
-      message.textContent = "QUEST UPDATED: Maid Vera gave you her royal seal. Show it to Sir Balt!";
+      message.textContent = "QUEST UPDATED: Maid Vero gave you her royal seal. Show it to Sir Balt!";
     } else {
-      showLines(["Maid Vera: Hurry, Princess! The seal should get you past Sir Balt."]);
+      showLines(["Maid Vero: Hurry, Princess! The seal should get you past Sir Balt."]);
     }
     return;
   }
@@ -759,7 +759,7 @@ function showLines(lines) {
 }
 function showCurrentLine() {
   const line = dialogueLines[dialogueIndex];
-  const match = /^(Traveller|The Hunter|Maid Vera(?: \(whispers\))?|Princess Valeriia|Sir Balt|Stablemaster|Princess Naomi|Naomi|Pal|Tobias|Innkeeper|Villager|Victal|Tavern Guest|Valeriia's thoughts|Narration|Mapkeeper|Traveller Baro|Traveller Sali|Bandit|Traveller Ace|Traveller Cibo|Traveller Zora|Traveller Enza|Traveller Kodo|Traveller Don|Traveller Kaya|Fair Vendor|Alchemist|Jeweller|Mapkeeper Feli|Traveller Darin|Traveller Woo|Jolly|Jill|Valeriia|Vik|Tavernkeeper|Westanol Citizen): (.*)$/.exec(line);
+  const match = /^(Traveller|The Hunter|Maid Vero(?: \(whispers\))?|Princess Valeriia|Sir Balt|Stablemaster|Princess Naomi|Naomi|Pal|Tobias|Innkeeper|Villager|Victal|Tavern Guest|Valeriia's thoughts|Narration|Mapkeeper|Traveller Baro|Traveller Sali|Bandit|Traveller Ace|Traveller Cibo|Traveller Zora|Traveller Enza|Traveller Kodo|Traveller Don|Traveller Kaya|Fair Vendor|Alchemist|Jeweller|Mapkeeper Feli|Traveller Darin|Traveller Woo|Jolly|Jill|Valeriia|Vik|Tavernkeeper|Westanol Citizen): (.*)$/.exec(line);
   speaker.textContent = match ? match[1] : "Princess Valeriia";
   dialogueText.textContent = match ? match[2] : line;
 }
@@ -968,7 +968,7 @@ function drawHall() {
   rect(312,312,24,16,"#e8afbb");rect(307,314,34,8,"#e8afbb");
   outline(70,285,65,37,"#9c7693","#e2b967",5);
   rect(89,298,25,12,"#e5c9a5");rect(93,292,17,8,"#6e524e");
-  // Maid Vera: white apron, puff sleeves and tidy brown hair.
+  // Maid Vero: white apron, puff sleeves and tidy brown hair.
   drawNpc(94,190,'#a75d80','#70463a');
   rect(104,210,10,12,'#eee2d5');rect(106,212,6,9,'#fff5e8');
   rect(100,207,5,5,'#f2dfcf');rect(115,207,5,5,'#f2dfcf');
@@ -5749,8 +5749,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w583_2": {"kind": "line", "speaker": "Prince Haroldo", "text": "Shut the fuck up.", "next": "w584"},
 "w584": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Bite his hand", "to": "w267"}, {"text": "Elbow him in the ribs.", "to": "w1267"}]},
 "w585": {"kind": "line", "speaker": "Prince Haroldo", "text": "Oh yes, she will. You depend on it.", "next": "w586"},
-"w586_missing": {"kind": "unresolved", "line": 586, "back": "w586"},
-"w586": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "No, she won’t. She doesn’t love you.", "to": "w587"}, {"text": "She can’t. She loves me.", "to": "w586_missing"}]},
+"w586": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "No, she won’t. She doesn’t love you.", "to": "w587"}, {"text": "She can’t. She loves me.", "to": "w589", "valeriiaReveals": true}]},
 "w587": {"kind": "line", "speaker": "Prince Haroldo", "text": "How do you know? She seems very interested in me.", "next": "w588"},
 "w588": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "I know, because I’m the one she loves. We’ve been in a relationship.", "to": "w589", "valeriiaReveals": true}, {"text": "It’s just I know. Okay?", "to": "w590"}]},
 "w589": {"kind": "line", "speaker": "Prince Haroldo", "text": "Is this true? Princess Naomi, is she telling the truth??", "next": "w589_2"},
