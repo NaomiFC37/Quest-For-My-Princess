@@ -604,7 +604,6 @@ const furniture = [
   { id: "nightstand", x: 202, y: 85, w: 49, h: 50, label: "Nightstand", lines: ["A shot glass sits on the nightstand.", "Some memories are best served in tiny glasses."] },
   { id: "desk", x: 420, y: 70, w: 150, h: 69, label: "Writing desk", lines: ["A framed picture of Naomi and me.", "I wonder when I'll see her again..."] },
   { id: "bookshelf", x: 472, y: 180, w: 108, h: 57, label: "Bookshelf", lines: ["Among the books is a letter from Naomi.", "Her handwriting. I could recognize it anywhere.", "A letter I keep close to my heart."] },
-  { id: "wardrobe", x: 55, y: 267, w: 123, h: 67, label: "Wardrobe", lines: ["My fur jacket!", "Even a princess needs an outfit for an adventure."] },
   { id: "invitation", x: 294, y: 345, w: 51, h: 23, label: "Sealed invitation", lines: ["A sealed envelope has been slipped beneath my door.", "By decree of the royal household of Westanol...", "You are invited to the marriage of Princess Naomi of Westanol and Prince Haroldo of Southeran.", "The ceremony will take place in FIVE DAYS.", "...NAOMI? MARRYING A PRINCE?!", "Oh, absolutely not.", "NEW QUEST: Reach Westanol before the wedding!"] }
 ];
 
@@ -1129,7 +1128,7 @@ const villageObjects=[{id:'hint',x:100,y:145,w:29,h:38},{id:'stall',x:440,y:127,
 const innObjects=[{id:'innkeeper',x:302,y:113,w:30,h:37},{id:'door',x:294,y:337,w:56,h:20}];
 function nearbyObject(objects,limit=56){const cx=princess.x+15,cy=princess.y+17;let best=Infinity,found=null;for(const obj of objects){const px=Math.max(obj.x,Math.min(cx,obj.x+obj.w)),py=Math.max(obj.y,Math.min(cy,obj.y+obj.h)),d=Math.hypot(cx-px,cy-py);if(d<limit&&d<best){found=obj;best=d}}return found}
 function scene56Interact(){if(scene==='victal'){if(Math.abs(princess.y-195)<110){if(scene5Won)showLines(['Victal: You may pass, Princess.']);else openCube()}else showLines(['The road winds through the countryside.']);return true}
-if(scene==='village'){const obj=nearbyObject(villageObjects,68);if(!obj){showLines(['A peaceful village in Eastlandia.']);return true}if(obj.id==='hint')showLines(['Villager: That is the best inn in the kingdom!']);else if(obj.id==='sign')showLines(['The road continues south.']);else if(obj.id==='inn')setScene('inn');else if(obj.id==='stall'){if(hasTakenApple)showLines(['The apples look fresh.']);else gossipChoices([['Steal an apple',()=>{choicePanel.hidden=true;if(addItem('apple'))hasTakenApple=true}],['Leave it alone',()=>{choicePanel.hidden=true}]],'What will Valeriia do?')}return true}
+if(scene==='village'){const obj=nearbyObject(villageObjects,68);if(!obj){showLines(['A peaceful village in Eastlandia.']);return true}if(obj.id==='hint')showLines(['Villager: That is the best inn in the kingdom!']);else if(obj.id==='sign')showLines(['The road continues south.']);else if(obj.id==='inn')setScene('inn');else if(obj.id==='stall'){if(hasTakenApple)showLines(['The apples look fresh.']);else gossipChoices([['Be mischief',()=>{forestInnEnd();if(addItem('apple')){hasTakenApple=true;showLines(['Narration: The apple has been added to your inventory.']);}}],['Leave the apple alone',forestInnEnd]],'What will Valeriia do?')}return true}
 if(scene==='inn'){const obj=nearbyObject(innObjects,68);if(obj?.id==='innkeeper')innStart();else if(obj?.id==='door')setScene('village',true);else showLines(['The inn is warm and cozy.']);return true}return false}
 function drawVillage(){drawRoad(); // overwrite Scene 4 characters and stalls with a village square
 rect(0,0,640,400,'#83b96f');for(let i=0;i<145;i++){const x=(i*137+23)%640,y=(i*89+17)%400;rect(x,y,4,4,i%3?'#b6d782':'#f4d2e2')}
@@ -4084,6 +4083,12 @@ function beachInnInteract(){
   forestInnSpeak('Narration',beachInnRoomReady?'Your room is through the doorway on the right.':'The innkeeper is waiting at the reception desk.');return true;
  }
  if(scene==='beachinnroom'){
+  if(nearPoint(125,258,75)){
+   forestInnSpeak('Princess Valeriia','Yellow and black, yellow and black, yellow and black',()=>{
+    forestInnSpeak('Princess Valeriia',"Oooh, black and yellow! Let's shake it up a little!");
+   });
+   return true;
+  }
   if(!beachInnSlept&&nearPoint(405,170,165)){forestInnSpeak('Narration','Princess Valeriia settles into the soft bed. The sound of the waves lulls her to sleep.',()=>{beachInnSlept=true;forestInnSpeak('Narration','Morning arrives. Sunlight streams through the window, and the sea sparkles outside.');});}
   else if(beachInnSlept)forestInnSpeak('Narration','A new day begins. Leave through the doorway at the bottom.');
   else forestInnSpeak('Narration','The bed looks wonderfully comfortable.');
@@ -4146,6 +4151,12 @@ function drawBeachInnRoom(){
  rect(0,0,640,400,'#d8c6b0');rect(0,0,640,130,'#c1d1c8');for(let y=137;y<400;y+=29)rect(0,y,640,3,'#ae947c');
  // Tall sea-facing window; darkness turns to daylight only after sleeping.
  rect(55,36,202,153,'#785e5b');rect(65,45,181,135,beachInnSlept?'#91cce1':'#202b50');rect(65,136,181,44,beachInnSlept?'#4387a5':'#243f67');if(beachInnSlept)rect(177,56,23,23,'#ffe5a0');else{rect(171,58,17,17,'#e5e0d5');for(let i=0;i<11;i++)rect(79+(i*31)%153,55+(i*17)%67,2,2,'#f6e5d7');}rect(152,45,7,135,'#e8d2af');rect(65,109,181,7,'#e8d2af');rect(49,35,16,154,'#81a5a2');rect(246,35,16,154,'#81a5a2');
+ // Wardrobe on the left, clear of the bed and doorway.
+ outline(72,206,106,99,'#785e5b','#e8d2af',3);
+ outline(81,216,43,79,'#957765','#b99a83',2);
+ outline(126,216,43,79,'#957765','#b99a83',2);
+ rect(115,254,4,7,'#ffd583');rect(132,254,4,7,'#ffd583');
+ innLabel('WARDROBE',125,200);
  // White-canopy bed with sea-green blankets; different from both forest inn bedrooms.
  rect(335,112,239,193,'#84675e');rect(346,130,218,160,'#e5d5bf');rect(354,151,203,127,'#609c98');rect(361,151,188,34,'#f6e8d3');rect(348,104,11,196,'#b79a79');rect(552,104,11,196,'#b79a79');rect(342,98,222,12,'#f4e4cf');rect(360,111,191,13,'#f1ded2');rect(278,169,44,52,'#93755f');rect(285,162,30,11,'#d2b78d');rect(294,146,10,17,'#e3bc69');rect(270,347,100,53,'#795d52');innLabel('EXIT ↓',321,337);innLabel(beachInnSlept?'GOOD MORNING':'REST HERE',456,91);
 }
@@ -4801,7 +4812,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
   box-sizing: border-box; width: min(100%, 780px); max-height: 100%;
 }
 #wedding-finale:has(.wedding-black-screen) .narration .wedding-text {
-  font-size: clamp(1.375rem, 3.5vw, 2rem); line-height: 1.45;
+  font-size: clamp(1.125rem, 2.8vw, 1.55rem); line-height: 1.45;
 }
 @media (prefers-reduced-motion: no-preference) {
   #wedding-finale[data-epilogue="true"][data-node="e_grief_visit"] .wedding-art {
@@ -5074,7 +5085,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w142": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia continues punching until Prince Haroldo lies limp on the floor.", "next": "w143"},
 "w143": {"kind": "line", "speaker": "Narration", "text": "Suddenly, the knights pull her up.", "next": "w143_2"},
 "w143_2": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia now faces the knights.", "image": 16, "next": "w144"},
-"w144": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Fight", "to": "w145"}, {"text": "Run", "to": "w146"}]},
+"w144": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Fight", "to": "w145"}, {"text": "Try to run", "to": "w146"}]},
 "w145": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia readies herself to fight.", "next": "w145_2"},
 "w145_2": {"kind": "line", "speaker": "Narration", "text": "The knights start circling her.", "next": "w102"},
 "w146": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia turns around to make a run for it.", "next": "w147"},
@@ -5100,7 +5111,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w154": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia spins around, hitting both knights at once, making them fall to the floor.", "next": "w155"},
 "w1154": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia swings at one knight, knocking him down, then rapidly turns around to swing at the other knight, knocking him down as well.", "next": "w155"},
 "w155": {"kind": "line", "speaker": "Narration", "text": "A third knight approaches.", "next": "w156"},
-"w156": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Make a run for it.", "to": "w157"}, {"text": "Attack the knight.", "to": "w401"}]},
+"w156": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Try to make a run for it.", "to": "w157"}, {"text": "Attack the knight.", "to": "w401"}]},
 "w157": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia looks at the exit of the royal hall. But first, she turns to look at Princess Naomi.", "next": "w158"},
 "w158": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Run, leaving Princess Naomi alone.", "to": "w159"}, {"text": "Ask Princess Naomi to come with you.", "to": "w162"}]},
 "w159": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia tries to make a run for it, but the knight catches her first. She falls to the floor.", "next": "w160"},
@@ -5128,7 +5139,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w173_2": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia is bleeding out.", "next": "w174"},
 "w174": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Naomi, come here, please.", "to": "w240"}, {"text": "Naomi, help.", "to": "w240"}]},
 "w175": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia breathes deeply. One by one, she skillfully shoots three knights.", "next": "w176"},
-"w176": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Drop the arquebus and make a run for it.", "to": "w177"}, {"text": "Continue fighting the knights.", "to": "w441"}]},
+"w176": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Drop the arquebus and try to make a run for it.", "to": "w177"}, {"text": "Continue fighting the knights.", "to": "w441"}]},
 "w177": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia looks at the exit of the royal hall. But first, she turns to look at Princess Naomi.", "image": 34, "next": "w178"},
 "w178": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Run, leaving Princess Naomi alone.", "to": "w159"}, {"text": "Ask Princess Naomi to come with you.", "to": "w162"}]},
 "w180": {"kind": "line", "speaker": "Prince Haroldo", "text": "You scared, little whore?", "next": "w181"},
@@ -5274,15 +5285,10 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w276": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "No the absolutely FUCK you won’t. I’ll kill you first.", "to": "w368"}, {"text": "You won’t find us.", "to": "w380"}]},
 "w277": {"kind": "line", "speaker": "King of Southeran", "text": "You little pest! Knights, attack!", "next": "w278"},
 "w278": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia is surrounded by knights.", "next": "w279"},
-"w279": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Get ready to defend yourself with your fists.", "to": "w283"}, {"text": "Steal a sword from one of the knights.", "to": "w282"}, {"text": "Attack Prince Haroldo first.", "to": "w280"}]},
+"w279": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Get ready to defend yourself with your fists.", "to": "w283"}, {"text": "Steal a sword from one of the knights.", "to": "w149"}, {"text": "Attack Prince Haroldo first.", "to": "w280"}]},
 "w280": {"kind": "line", "speaker": "Narration", "text": "As the knights approach the altar, Princess Valeriia stays and faces Prince Haroldo.", "image": 44, "next": "w280_2"},
 "w280_2": {"kind": "line", "speaker": "Prince Haroldo", "text": "You wouldn’t dare.", "next": "w281"},
 "w281": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Fucking watch me.", "to": "w130"}, {"text": "Shut the fuck up.", "to": "w130"}]},
-"w282": {"kind": "line", "speaker": "Narration", "text": "Valeriia swiftly takes a sword from one of the knights.", "image": 29, "takeSword": true, "next": "w282_2"},
-"w282_2": {"kind": "line", "speaker": "Narration", "text": "The knights attack her.", "next": "w282_3"},
-"w282_3": {"kind": "line", "speaker": "Narration", "text": "A knight approaches Princess Valeriia, and swings at her with his sword.", "next": "w282_4"},
-"w282_4": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia uses her sword and strikes him. He strikes at her multiple times.", "next": "w282_5"},
-"w282_5": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia starts bleeding.", "next": "w104"},
 "w283": {"kind": "line", "speaker": "Narration", "text": "A knight approaches Princess Valeriia, and swings at her with his sword.", "next": "w283_2"},
 "w283_2": {"kind": "line", "speaker": "Narration", "text": "He strikes at her multiple times.", "next": "w283_3"},
 "w283_3": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia starts bleeding.", "next": "w104"},
@@ -5478,7 +5484,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w420_2": {"kind": "line", "speaker": "Narration", "text": "Two knights approach her from behind, and hit her back, and the back of her head, making her fall. She turns onto her back, bleeding out.", "next": "w421"},
 "w421": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Keep fighting.", "to": "w403"}, {"text": "Surrender.", "to": "w122"}]},
 "w422": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia blocks the incoming hits from the knights. But a knight surprises her from behind, and hits the back of her head. She quickly turns around and strikes him down. Then she strikes another knight down.", "next": "w423"},
-"w423": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Make a run for it.", "to": "w424"}, {"text": "Attack the knights.", "to": "w426"}]},
+"w423": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Try to make a run for it.", "to": "w424"}, {"text": "Attack the knights.", "to": "w426"}]},
 "w424": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia looks at the exit of the royal hall. But first, she turns to look at Princess Naomi.", "next": "w425"},
 "w425": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Run, leaving Princess Naomi alone.", "to": "w159"}, {"text": "Ask Princess Naomi to come with you.", "to": "w162"}]},
 "w426": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia continues attacking, hitting another knight.", "next": "w426_2"},
@@ -5497,7 +5503,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "w434": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Keep fighting.", "to": "w403"}, {"text": "Surrender.", "to": "w122"}]},
 "w435": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia defends against the attacking knights, successfully escaping their swords. At key moments, she strikes back, making two knights fall.", "next": "w435_2"},
 "w435_2": {"kind": "line", "speaker": "Narration", "text": "Another knight approaches.", "next": "w436"},
-"w436": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Make a run for it.", "to": "w437"}, {"text": "Attack the knight.", "to": "w439"}]},
+"w436": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Try to make a run for it.", "to": "w437"}, {"text": "Attack the knight.", "to": "w439"}]},
 "w437": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia looks at the exit of the royal hall. But first, she turns to look at Princess Naomi.", "next": "w438"},
 "w438": {"kind": "choice", "speaker": "Princess Valeriia", "options": [{"text": "Run, leaving Princess Naomi alone.", "to": "w159"}, {"text": "Ask Princess Naomi to come with you.", "to": "w162"}]},
 "w439": {"kind": "line", "speaker": "Narration", "text": "Princess Valeriia attacks him, knocking him out.", "next": "w439_2"},
@@ -5930,7 +5936,7 @@ document.getElementById('spinningNext').addEventListener('click',()=>{if(spinnin
 "e_end_secret_stay": {"kind": "ending", "outcome": "secretStay", "image": "black", "text": "Made for my Princess Valeriia. Love, your Princess Naomi. ❤️"},
 "e_portrait_secret_stay": {"kind": "line", "speaker": "Narration", "text": "A tale of forbidden romance, and true love.", "next": "e_end_secret_stay", "image": "e2"},
 "e_end_open_northal": {"kind": "ending", "outcome": "openLeave", "image": "black", "text": "Made for my Princess Valeriia. Love, your Princess Naomi. ❤️"},
-"e_portrait_open_northal": {"kind": "line", "speaker": "Narration", "text": "A tale of forbidden romance, and true love.", "next": "e_end_open_northal", "image": "e2"},
+"e_portrait_open_northal": {"kind": "line", "speaker": "Narration", "text": "A tale of forbidden romance turned accepted, a tale of true love.", "next": "e_end_open_northal", "image": "e2"},
 "e_end_open_stay": {"kind": "ending", "outcome": "openStay", "image": "black", "text": "Made for my Princess Valeriia. Love, your Princess Naomi. ❤️"},
 "e_portrait_open_stay": {"kind": "line", "speaker": "Narration", "text": "A tale of forbidden romance turned accepted, a tale of true love.", "next": "e_end_open_stay", "image": "e2"},
 "e_marriage_1": {"kind": "line", "speaker": "Narration", "text": "Princess Naomi and Prince Haroldo got married.", "next": "e_marriage_1_2", "image": "e9"},
