@@ -724,13 +724,26 @@ function notHimReply(){
  ]));
 }
 function sheWantsMe(){
- T("What?!",()=>V("You heard me.",()=>T("She wants you? That's absurd.",()=>gossipChoices([
+ const disbelief=()=>T("She wants you? That's absurd.",()=>gossipChoices([
   ["You're right. Goodbye.",()=>V("You're right. Goodbye.",gossipEnd)],
   ["We've been in a secret relationship for over a year.",secretReveal]
- ]))));
+ ]));
+ const replies=["You heard me.","I said what I said."];
+ T("What?!",()=>gossipChoices(replies.map(reply=>[reply,()=>V(reply,disbelief)])));
 }
 function secretReveal(){
- V("We've been in a secret relationship for over a year.",()=>T("I don't believe you for one second.",()=>V("Do you know who I am? I'm the Princess.",()=>T("Princess! Yes! I'm so sorry. I'll stop talking now.",goodEnd))));
+ const apologize=()=>T("Princess! Yes! I'm so sorry. I'll stop talking now.",goodEnd);
+ const reveal="Do you know who I am? I'm the Princess.";
+ const warn="Be careful who you're speaking to. I'm the Princess.";
+ const leave="Sure thing, asshole. Bye.";
+ const dismiss="Believe what you want.";
+ V("We've been in a secret relationship for over a year.",()=>T("I don't believe you for one second.",()=>gossipChoices([
+  [reveal,()=>V(reveal,apologize)],
+  [dismiss,()=>V(dismiss,()=>T("I believe you're a liar.",()=>gossipChoices([
+   [warn,()=>V(warn,apologize)],
+   [leave,()=>V(leave,gossipEnd)]
+  ])))]
+ ])));
 }
 function option3(){V("Mind your own business.",()=>P("Whatever. Go away.",()=>gossipChoices([
  ["Excuse me? Do you know who you're speaking to?",()=>V("Excuse me? Do you know who you're speaking to?",()=>P("And who am I speaking to?",()=>gossipChoices([
@@ -2727,7 +2740,8 @@ function enzaYanniReveal(){enzaSay('Traveller Enza','He’s been spotted with an
  ]));}
 function enzaEnzaWedding(){enzaSay('Traveller Enza','And we also support Princess Naomi and Haroldo!!',()=>enzaOptions([
  ['For fuck’s sake. It’s forced. Don’t you see?',()=>enzaVal('For fuck’s sake. It’s forced. Don’t you see?',()=>enzaSay('Traveller Enza','We see the blossoming love!',()=>enzaOptions([
-  ['Lunatics. Be gone.',()=>enzaVal('Lunatics. Be gone.',enzaFinish)]
+  ['Lunatics. Be gone.',()=>enzaVal('Lunatics. Be gone.',enzaFinish)],
+  ['Insane people. Bye.',()=>enzaVal('Insane people. Bye.',enzaFinish)]
  ])))],
  ['Sure. Be gone.',()=>enzaVal('Sure. Be gone.',enzaFinish)]
  ]));}
